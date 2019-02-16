@@ -188,7 +188,8 @@ function buildProduct() {
     productbuild --distribution ${TARGET_DIRECTORY}/darwin/Distribution \
     --resources ${TARGET_DIRECTORY}/darwin/Resources \
     --package-path ${TARGET_DIRECTORY}/package \
-    ${TARGET_DIRECTORY}/pkg/$1 &> ${TARGET_DIRECTORY}/kosala.txt#> /dev/null 2>&1
+    ${TARGET_DIRECTORY}/pkg/$1 &> ${TARGET_DIRECTORY}/kosala.txt
+    #> /dev/null 2>&1
 }
 
 function signProduct() {
