@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <installer-script minSpecVersion="1.000000">
-    <title>WSO2 Cellery __CELLERY_VERSION__</title>
-    <background mime-type="image/png" file="dialog.png"/>
+    <title>Cellery</title>
+    <background mime-type="image/png" file="dialog.png" scaling="proportional"/>
     <welcome file="welcome.html" mime-type="text/html" />
     <conclusion file="conclusion.html" mime-type="text/html" />
     <options customize="never" allow-external-scripts="no"/>
@@ -11,13 +11,13 @@
 function installCheck() {
     if(!(system.compareVersions(system.version.ProductVersion, '10.6.0') >= 0)) {
         my.result.title = 'Unable to install';
-        my.result.message = 'Cellery requires Mac OS X 10.6 or later.';
+        my.result.message = '__PRODUCT__ requires Mac OS X 10.6 or later.';
         my.result.type = 'Fatal';
         return false;
     }
-    if(system.files.fileExistsAtPath('/Library/Cellery/cellery)) {
+    if(system.files.fileExistsAtPath('/Library/Cellery/cellery')) {
         my.result.title = 'Previous Installation Detected';
-        my.result.message = 'A previous installation of Cellery-__CELLERY_VERSION__ exists at /Library/Cellery/. This installer will remove the previous installation prior to installing. Please back up any data before proceeding.';
+        my.result.message = 'A previous installation of Cellery exists at /Library/Cellery/. This installer will remove the previous installation prior to installing. Please back up any data before proceeding.';
         my.result.type = 'Warning';
         return false;
     }
@@ -25,10 +25,10 @@ function installCheck() {
 }
     </script>
     <choices-outline>
-        <line choice="wso2am"/>
+        <line choice="__PRODUCT__"/>
     </choices-outline>
-    <choice id="wso2am" title="__CELLERY_VERSION__">
-        <pkg-ref id="wso2am.pkg"/>
+    <choice id="__PRODUCT__" title="__PRODUCT__">
+        <pkg-ref id="__PRODUCT__.pkg"/>
     </choice>
-    <pkg-ref id="wso2am.pkg" auth="Root">wso2am.pkg</pkg-ref>
+    <pkg-ref id="__PRODUCT__.pkg" auth="Root">__PRODUCT__.pkg</pkg-ref>
 </installer-script>

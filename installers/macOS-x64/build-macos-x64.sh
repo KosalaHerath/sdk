@@ -42,7 +42,8 @@ fi
 
 #Parameters
 TARGET_DIRECTORY="target"
-CELLERY_VERSION=${1}
+VERSION=${1}
+PRODUCT="cellery"
 INSTALLATION_DIRECTORY="cellery-ubuntu-x64-"${1}
 DATE=`date +%Y-%m-%d`
 TIME=`date +%H:%M:%S`
@@ -139,16 +140,14 @@ copyDarwinDirectory(){
 }
 
 copyBuildDirectory() {
-    # sed -i -e 's/__PRODUCT_VERSION__/'${VERSION}'/g' target/darwin/scripts/postinstall
-    # sed -i -e 's/__PRODUCT__/'${PRODUCT}'/g' target/darwin/scripts/postinstall
-    # sed -i -e 's/__TITLE__/'${TITLE}'/g' target/darwin/scripts/postinstall
-    # chmod -R 755 target/darwin/scripts/postinstall
+    chmod -R 755 target/darwin/scripts/postinstall
 
-    sed -i -e 's/__CELLERY_VERSION__/'${CELLERY_VERSION}'/g' ${TARGET_DIRECTORY}/darwin/Distribution
+    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' ${TARGET_DIRECTORY}/darwin/Distribution
+    sed -i '' -e 's/__PRODUCT__/cellery/g' ${TARGET_DIRECTORY}/darwin/Distribution
     chmod -R 755 ${TARGET_DIRECTORY}/darwin/Distribution
 
-    sed -i -e 's/__CELLERY_VERSION__/'${CELLERY_VERSION}'/g' ${TARGET_DIRECTORY}/darwin/Resources/*.html
-    chmod -R 755 target/darwin/Resources/
+    sed -i '' -e 's/__VERSION__/'${VERSION}'/g' ${TARGET_DIRECTORY}/darwin/Resources/*.html
+    chmod -R 755 ${TARGET_DIRECTORY}/darwin/Resources/
 
     rm -rf ${TARGET_DIRECTORY}/darwinpkg
     mkdir -p ${TARGET_DIRECTORY}/darwinpkg
@@ -176,11 +175,11 @@ copyBuildDirectory() {
 
 function buildPackage() {
     log_info "Cellery product installer package building started.(1/3)"
-    pkgbuild --identifier org.cellery.${CELLERY_VERSION} \
-    --version ${CELLERY_VERSION} \
+    pkgbuild --identifier org.${PRODUCT}.${VERSION} \
+    --version ${VERSION} \
     --scripts ${TARGET_DIRECTORY}/darwin/scripts \
     --root ${TARGET_DIRECTORY}/darwinpkg \
-    ${TARGET_DIRECTORY}/package/wso2am.pkg #> /dev/null 2>&1
+    ${TARGET_DIRECTORY}/package/cellery.pkg > /dev/null 2>&1
 }
 
 function buildProduct() {
@@ -188,8 +187,7 @@ function buildProduct() {
     productbuild --distribution ${TARGET_DIRECTORY}/darwin/Distribution \
     --resources ${TARGET_DIRECTORY}/darwin/Resources \
     --package-path ${TARGET_DIRECTORY}/package \
-    ${TARGET_DIRECTORY}/pkg/$1 &> ${TARGET_DIRECTORY}/kosala.txt
-    #> /dev/null 2>&1
+    ${TARGET_DIRECTORY}/pkg/$1 > /dev/null 2>&1
 }
 
 function signProduct() {
@@ -207,9 +205,15 @@ function signProduct() {
 function createInstaller() {
     log_info "Cellery product installer generation process started.(3 Steps)"
     buildPackage
-    buildProduct cellery-macos-installer-x64-$CELLERY_VERSION.pkg
-    signProduct cellery-macos-installer-x64-$CELLERY_VERSION.pkg
+    buildProduct cellery-macos-installer-x64-$VERSION.pkg
+    signProduct cellery-macos-installer-x64-$VERSION.pkg
     log_info "Cellery product installer generation process finished."
+}
+
+function createUninstaller(){
+    cp uninstall.sh ${TARGET_DIRECTORY}/darwinpkg/Library/Cellery
+    sed -i '' -e "s/__VERSION__/${VERSION}/g" "${TARGET_DIRECTORY}/darwinpkg/Library/Cellery/uninstall.sh"
+    sed -i '' -e "s/__PRODUCT__/${PRODUCT}/g" "${TARGET_DIRECTORY}/darwinpkg/Library/Cellery/uninstall.sh"
 }
 
 # Main Code ---- Running -------
@@ -233,25 +237,10 @@ buildCelleryCLI
 getProductSize
 copyDarwinDirectory
 copyBuildDirectory
+createUninstaller
 createInstaller
 
 
-echo "Process Finished...!!"
-exit 1
-
-
-# >>>>>>>>>>>>> MY CODE  <<<<<<<<<<<<<<<<<<<
-
-function createUninstaller(){
-    cd tmp/
-    sed -i .bk "s/__PRODUCT_VERSION__/${VERSION}/g" "./uninstall.sh" && rm *.bk  #for uninstall file
-    sed -i .bk "s/__PRODUCT__/${PRODUCT}/g" "./uninstall.sh" && rm *.bk  #for uninstall file
-    sed -i .bk "s/__TITLE__/${TITLE}/g" "./uninstall.sh" && rm *.bk  #for uninstall file
-    cd ../
-    cp tmp/uninstall.sh $PRODUCT-$VERSION/
-}
-
-
-
+log_info "Process Finished"
 
 exit 0
