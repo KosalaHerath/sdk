@@ -34,8 +34,13 @@ function printUsage() {
 
 }
 
-if [ -z "$1" ]; then # --help option need to be validate
-    echo "Please enter the version of the cellery distribution."
+if [[ "$1" == "-h" ||  "$1" == "--help" ]]; then
+    printUsage
+    exit 1
+elif [[ "$1" == [0-9].[0-9].[0-9] ]]; then
+    echo "Cellery Version : $1"
+else
+    echo "Please enter a valid version for cellery distribution"
     printUsage
     exit 1
 fi
@@ -219,7 +224,7 @@ command -v ballerina >/dev/null 2>&1 || {
 }
 
 #Main script
-log_info "Installer Generating process started."
+log_info "Installer generating process started."
 
 buildBallerinaNatives
 buildCelleryCLI
@@ -228,5 +233,5 @@ copyBuildDirectory
 createUninstaller
 createInstaller
 
-log_info "Installer Generating process finished"
+log_info "Installer generating process finished"
 exit 0
