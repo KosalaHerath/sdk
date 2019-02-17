@@ -24,7 +24,7 @@ PRODUCT_HOME=/Library/Cellery/
 #Change permissions in home directory
 echo "Change permissions in product home"
 cd $PRODUCT_HOME
-chmod -R ugo+rwx .
+chmod -R 755 .
 [ -d /usr/local/bin ] || mkdir /usr/local/bin
 
 #Add cellery shortcut to /usr/local/bin

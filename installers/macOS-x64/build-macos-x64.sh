@@ -119,17 +119,6 @@ buildCelleryCLI() {
     popd >/dev/null 2>&1
 }
 
-getProductSize() {
-    CELLERY_SIZE=$(du -s ../../components/build/cellery | awk '{print $1}')
-    CELLERY_JAR_SIZE=$(du -s ../../components/lang/target/cellery-*.jar | awk '{print $1}')
-    CELLERY_REPO_SIZE=$(du -s ../../components/lang/target/generated-balo/ | awk '{print $1}')
-
-    BINARY_SIZE_KB=$((CELLERY_SIZE + CELLERY_JAR_SIZE + CELLERY_REPO_SIZE))
-    BINARY_SIZE_MB=$((BINARY_SIZE_KB/1024))
-
-    BINARY_SIZE=${BINARY_SIZE_MB}
-}
-
 copyDarwinDirectory(){
   createInstallationDirectory
   rm -rf ${TARGET_DIRECTORY}/darwin
@@ -163,6 +152,7 @@ copyBuildDirectory() {
     mkdir -p ${TARGET_DIRECTORY}/darwinpkg/${HOME_BALLERINA}/lib/repo
     cp ../../components/lang/target/cellery-*.jar ${TARGET_DIRECTORY}/darwinpkg/${HOME_BALLERINA}/bre/lib/
     cp -R ../../components/lang/target/generated-balo/repo/celleryio ${TARGET_DIRECTORY}/darwinpkg/${HOME_BALLERINA}/lib/repo
+    chmod -R 755 ${TARGET_DIRECTORY}/darwinpkg
 
     rm -rf ${TARGET_DIRECTORY}/package
     mkdir -p ${TARGET_DIRECTORY}/package
@@ -233,14 +223,10 @@ log_info "Installer Generating process started."
 
 buildBallerinaNatives
 buildCelleryCLI
-
-getProductSize
 copyDarwinDirectory
 copyBuildDirectory
 createUninstaller
 createInstaller
 
-
-log_info "Process Finished"
-
+log_info "Installer Generating process finished"
 exit 0
